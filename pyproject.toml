@@ -1,0 +1,23 @@
+[project]
+name = "nightshift"
+version = "0.1.0"
+description = "Self-hosted autonomous company operator: a nightly AI CEO that plans, builds, markets, and reports — Polsia-style, but on your own machine with zero platform fees."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "claude-agent-sdk>=0.1.0",
+    "tweepy>=4.14.0",
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.0",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+nightshift = "nightshift.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["nightshift*"]

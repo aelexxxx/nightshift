@@ -1,0 +1,16 @@
+{
+  "_comment": "Copy to mcp.json to give every company extra tools via MCP. Any stdio or HTTP MCP server works. A company can also have its own mcp.json inside its folder; entries there override these.",
+  "mcpServers": {
+    "stripe": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@stripe/mcp", "--tools=all"],
+      "env": { "STRIPE_SECRET_KEY": "sk_live_..." }
+    },
+    "some-remote-connector": {
+      "type": "http",
+      "url": "https://example.com/mcp",
+      "headers": { "Authorization": "Bearer ..." }
+    }
+  }
+}

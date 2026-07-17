@@ -1,0 +1,38 @@
+# One file = one business. Everything the engine needs to know.
+name: My Company
+mission: >
+  Describe the business
+
+# Where morning reports go (empty → OWNER_EMAIL from .env)
+owner_email: ""
+
+# Model override for this company (empty → NIGHTSHIFT_MODEL from .env)
+model: ""
+
+# Hard limits — enforced in code, not by the model
+max_turns: 150            # per nightly run
+monthly_budget_usd: 50    # model spend; runs are skipped once exhausted
+
+# "full"  → sends emails / posts tweets directly
+# "draft" → everything outbound is queued in outbox/pending for your approval
+autonomy: full
+
+# Cold outreach to strangers. Keep false unless you understand the legal
+# situation in your jurisdiction (GDPR/UWG in the EU is strict about this).
+cold_outreach: false
+
+channels:
+  email:
+    enabled: true
+    daily_send_cap: 20
+  twitter:
+    enabled: true
+    daily_post_cap: 8
+  github:
+    enabled: true
+
+# KPIs the CEO must track every night (log_kpi → kpis.csv)
+kpis:
+  - site_visits
+  - signups
+  - revenue_usd

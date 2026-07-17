@@ -1,0 +1,14 @@
+.env
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+mcp.json
+companies/*/workspace/*
+!companies/*/workspace/.gitkeep
+companies/*/outbox/pending/*
+!companies/*/outbox/pending/.gitkeep
+.DS_Store

@@ -1,0 +1,9 @@
+# Cron alternative to `nightshift daemon` (more robust on servers).
+# crontab -e, then adapt paths. One line per company, staggered.
+
+# m  h  dom mon dow  command
+0  2  *   *   *    cd /path/to/nightshift && .venv/bin/nightshift run acme      >> logs/acme.log      2>&1
+20 2  *   *   *    cd /path/to/nightshift && .venv/bin/nightshift run second-co >> logs/second-co.log 2>&1
+
+# Weekly git snapshot of all company state (memory, journals, ledgers, overrides):
+0  8  *   *   0    cd /path/to/nightshift && git add -A && git commit -m "weekly snapshot" >> logs/git.log 2>&1
