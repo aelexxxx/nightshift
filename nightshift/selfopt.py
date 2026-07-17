@@ -49,9 +49,12 @@ async def reflect(settings: Settings, company: Company, journal_file: Path) -> d
     kpis = _tail(company.path / "kpis.csv", 3000)
     lessons = _tail(company.memory / "LESSONS.md", 4000)
 
+    from . import goals as goals_mod
+    goals_text = goals_mod.goals_block(company)
+
     prompt = f"""Company: {company.name}
 Mission: {company.mission}
-
+{goals_text}
 ## Tonight's journal
 {_tail(journal_file)}
 

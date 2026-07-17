@@ -110,6 +110,7 @@ class Company:
     autonomy: str = "full"             # "full" | "draft"
     cold_outreach: bool = False
     kpis: list[str] = field(default_factory=list)
+    skills: str | list[str] = "all"
     email: ChannelConfig = field(default_factory=ChannelConfig)
     twitter: ChannelConfig = field(default_factory=ChannelConfig)
     github: bool = False
@@ -164,6 +165,7 @@ def load_company(path: Path) -> Company:
         autonomy=raw.get("autonomy", "full"),
         cold_outreach=bool(raw.get("cold_outreach", False)),
         kpis=list(raw.get("kpis", []) or []),
+        skills=raw.get("skills", "all") or "all",
         email=ChannelConfig(
             enabled=bool(em.get("enabled", False)),
             daily_cap=int(em.get("daily_send_cap", 20)),

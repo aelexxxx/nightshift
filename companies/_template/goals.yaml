@@ -1,0 +1,21 @@
+# The goal loop: hand the system measurable targets and it optimizes toward
+# them — nightly runs see live progress, the weekly review re-plans against
+# the most lagging goal, and the reflection pass grades nights on goal
+# progress. Metrics must match the names used with log_kpi (→ kpis.csv).
+
+north_star: "First paying customer"
+
+# Weekday of the weekly strategy review run (audit goals & experiments,
+# re-rank channels, plan next week's bets). Remove to disable.
+review_day: sunday
+
+goals:
+  - metric: signups
+    target: 50
+    by: 2026-10-01
+  - metric: revenue_usd
+    target: 100
+    by: 2026-11-01
+  # - metric: newsletter_subs
+  #   target: 200
+  #   by: 2026-12-01

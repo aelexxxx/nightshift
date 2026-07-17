@@ -31,7 +31,12 @@ channels:
   github:
     enabled: true
 
+# Skills from skills/ linked to this company: "all" or a list, e.g.
+# skills: [copywriting, twitter-growth, experiment-design]
+skills: all
+
 # KPIs the CEO must track every night (log_kpi → kpis.csv)
+# Names must match goals.yaml metrics where goals exist.
 kpis:
   - site_visits
   - signups

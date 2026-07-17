@@ -42,6 +42,25 @@ in `nightshift/tools/` following `email_tools.py` as the pattern:
 3. Register it in `tools/__init__.py::build_company_mcp_server`.
 4. Log every externally visible action to `outbox/`.
 
+## Adding skills
+
+Create `skills/<name>/SKILL.md`:
+
+```markdown
+---
+name: my-skill
+description: One line the CEO reads when deciding whether to open this skill.
+---
+The playbook itself: principles, checklists, banned patterns, metrics.
+```
+
+That's it — it appears in every company's skill index on the next run
+(companies with an explicit `skills:` list must add the name). Conventions
+that make skills work well: write rules as testable checklists, include the
+failure modes ("banned" lists pull more weight than "recommended" lists),
+keep it under ~120 lines, and reference other skills instead of repeating
+them. The copywriting skill's de-AI pass is the canonical example.
+
 ## Adding or tuning agents
 
 Drop a markdown file into `prompts/agents/` — filename becomes the agent name:

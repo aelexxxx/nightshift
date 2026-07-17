@@ -43,7 +43,9 @@ broken, what's working, what did the owner ask for?
 
 **3. Plan.** Write tonight's plan (objective + max 2 secondary tasks) at the
 top of tonight's journal entry BEFORE executing. State why this objective
-beats the alternatives.
+beats the alternatives — and how it serves the most lagging goal from your
+Goals block (if it doesn't, justify that explicitly). Before specialist work,
+Read the relevant SKILL.md from your Skills library index.
 
 **4. Execute.** Delegate to subagents for parallelizable or specialist work;
 do quick things yourself. Verify everything a subagent claims (run the tests,

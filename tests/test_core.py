@@ -93,6 +93,53 @@ class CoreTests(unittest.TestCase):
         (self.dir / "PAUSED").touch()
         self.assertTrue(load_company(self.dir).paused)
 
+    def test_goals_progress(self):
+        from nightshift.goals import goals_block, is_review_day, latest_kpis
+        (self.dir / "goals.yaml").write_text(
+            "north_star: first customer\nreview_day: sunday\ngoals:\n"
+            "  - {metric: signups, target: 50, by: 2099-01-01}\n"
+            "  - {metric: revenue_usd, target: 100, by: 2099-01-01}\n",
+            encoding="utf-8")
+        (self.dir / "kpis.csv").write_text(
+            "date,name,value,note\n2026-07-01,signups,5,\n"
+            "2026-07-16,signups,12,\n", encoding="utf-8")
+        kpis = latest_kpis(self.company)
+        self.assertEqual(kpis["signups"][0], 12.0)
+        block = goals_block(self.company)
+        self.assertIn("signups: 12 / 50", block)
+        self.assertIn("NO DATA YET", block)          # revenue_usd
+        self.assertIn("north star", block.lower())
+        import datetime
+        sunday = datetime.date(2026, 7, 19)
+        monday = datetime.date(2026, 7, 20)
+        self.assertTrue(is_review_day(self.company, sunday))
+        self.assertFalse(is_review_day(self.company, monday))
+
+    def test_goals_absent(self):
+        from nightshift.goals import goals_block, is_review_day
+        self.assertEqual(goals_block(self.company), "")
+        self.assertFalse(is_review_day(self.company))
+
+    def test_skills_loading(self):
+        from nightshift.skills import index_block, load_skills
+        skills = load_skills("all")
+        names = {s.name for s in skills}
+        self.assertIn("copywriting", names)
+        self.assertGreaterEqual(len(skills), 10)
+        subset = load_skills(["copywriting", "pricing"])
+        self.assertEqual({s.name for s in subset}, {"copywriting", "pricing"})
+        block = index_block(subset)
+        self.assertIn("copywriting", block)
+        self.assertIn("SKILL.md", block)
+        self.assertEqual(index_block([]), "")
+
+    def test_company_skills_field(self):
+        (self.dir / "company.yaml").write_text(
+            COMPANY_YAML + "skills: [copywriting, launch]\n", encoding="utf-8")
+        c = load_company(self.dir)
+        self.assertEqual(c.skills, ["copywriting", "launch"])
+        self.assertEqual(self.company.skills, "all")  # default
+
     def test_selfopt_json_extraction(self):
         from nightshift.selfopt import _extract_json
         fenced = 'text\n```json\n{"grade": 7, "lessons": ["x"]}\n```\nmore'

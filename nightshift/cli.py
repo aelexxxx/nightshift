@@ -112,6 +112,31 @@ def cmd_resume(args) -> int:
     return 0
 
 
+def cmd_skills(_args) -> int:
+    from .skills import load_skills
+    skills = load_skills("all")
+    if not skills:
+        print("No skills found in skills/.")
+        return 0
+    for s in skills:
+        print(f"{s.name:20} {s.description[:90]}")
+    print(f"\n{len(skills)} skills. Link per company via 'skills:' in company.yaml "
+          f"(default: all).")
+    return 0
+
+
+def cmd_goals(args) -> int:
+    from .goals import goals_block, is_review_day
+    c = load_company(COMPANIES_DIR / args.slug)
+    block = goals_block(c)
+    print(block.strip() or "No goals.yaml — copy the template from "
+                           "companies/_template/goals.yaml")
+    if block:
+        print(f"\nWeekly review night: "
+              f"{'today' if is_review_day(c) else 'per goals.yaml review_day'}")
+    return 0
+
+
 def cmd_doctor(_args) -> int:
     settings = load_settings()
     checks = [
@@ -169,6 +194,13 @@ def main() -> None:
     s = sub.add_parser("resume", help="resume a paused company")
     s.add_argument("slug")
     s.set_defaults(func=cmd_resume)
+
+    s = sub.add_parser("skills", help="list the skills library")
+    s.set_defaults(func=cmd_skills)
+
+    s = sub.add_parser("goals", help="goal progress for a company")
+    s.add_argument("slug")
+    s.set_defaults(func=cmd_goals)
 
     s = sub.add_parser("doctor", help="check configuration")
     s.set_defaults(func=cmd_doctor)

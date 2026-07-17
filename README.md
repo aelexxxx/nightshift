@@ -96,6 +96,40 @@ Prefer cron/systemd on a server? See `scripts/cron.example`. Multiple
 companies just work — each is an isolated folder with its own budget, memory,
 and overrides. Add more with `nightshift new`.
 
+## The goal loop (steer with targets, not tasks)
+
+You don't manage this system with to-dos — you hand it measurable targets in
+`companies/<slug>/goals.yaml`:
+
+```yaml
+north_star: "First paying customer"
+review_day: sunday
+goals:
+  - { metric: signups,     target: 50,  by: 2026-10-01 }
+  - { metric: revenue_usd, target: 100, by: 2026-11-01 }
+```
+
+Every nightly run sees live progress (computed from kpis.csv) and must move
+the most lagging goal or instrument it. On `review_day` the run switches to a
+**weekly strategy review**: audit goal trends, close experiments with honest
+verdicts (memory/EXPERIMENTS.md), rank channels by results-per-effort, and
+place next week's 1–2 bets. The reflection pass grades nights against goal
+progress — nights that ignore lagging goals get capped grades, which flows
+into the self-optimized playbook. Check anytime: `nightshift goals <slug>`.
+
+## The skills library (shared craft across all companies)
+
+`skills/<name>/SKILL.md` files are playbooks every company shares: how to
+write copy, run outreach, design experiments, price products. A compact index
+is injected into the CEO's prompt; agents read the full skill before doing
+that kind of work. Link per company via `skills:` in company.yaml (`all` by
+default, or a list for focused projects). Ships with 11 skills — see
+`nightshift skills` — including **copywriting**, which contains the mandatory
+"de-AI pass": a catalog of AI-writing tells (banned vocabulary, "It's not
+just X, it's Y" constructions, rule-of-three addiction, summary endings,
+uniform rhythm …) that every public word must be stripped of. Add your own
+skill: create a folder + SKILL.md, done — every company benefits immediately.
+
 ## The self-optimization loop
 
 After every run a cheap reflection pass reads the journal and KPI history,
@@ -149,9 +183,12 @@ inside the lines; loosen them deliberately, not accidentally.
 
 ```
 nightshift/            engine, scheduler, CLI, tools (the code)
-prompts/               CEO + subagent prompts, reflection rubric (the soul)
+prompts/               CEO + subagent prompts, operating standards,
+                       weekly-review protocol, reflection rubric (the soul)
+skills/                shared craft library (copywriting incl. de-AI pass,
+                       outreach, launch, experiments, pricing, …)
 companies/_template/   copied by `nightshift new`
-companies/<slug>/      one folder per business: config, state, memory,
+companies/<slug>/      one folder per business: config, goals, state, memory,
                        journal, outbox, ledger, kpis, overrides
 docs/                  SAFETY.md, EXTENDING.md
 scripts/cron.example   cron/systemd alternative to the daemon

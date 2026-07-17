@@ -9,10 +9,12 @@ from pathlib import Path
 
 from claude_agent_sdk import ClaudeAgentOptions, query
 
+from . import goals as goals_mod
 from . import reporting, selfopt
 from .agents import load_subagents
 from .config import PROMPTS_DIR, REPO_ROOT, Company, Settings, load_company
 from .ledger import Ledger
+from .skills import index_block, load_skills
 from .tools import build_company_mcp_server
 
 
@@ -32,6 +34,9 @@ def _load_external_mcp_servers(company: Company) -> dict:
 
 def _system_prompt(settings: Settings, company: Company, ledger: Ledger) -> str:
     base = (PROMPTS_DIR / "ceo.md").read_text(encoding="utf-8")
+    standards_file = PROMPTS_DIR / "standards.md"
+    if standards_file.exists():
+        base += "\n\n" + standards_file.read_text(encoding="utf-8")
 
     channels = []
     if company.email.enabled and settings.email_configured:
@@ -64,7 +69,10 @@ def _system_prompt(settings: Settings, company: Company, ledger: Ledger) -> str:
             overrides = ("\n## Learned overrides (self-optimized — follow these, "
                          "they encode past lessons)\n\n" + text + "\n")
 
-    return base + profile + overrides
+    skills = index_block(load_skills(company.skills))
+    goals = goals_mod.goals_block(company)
+
+    return base + profile + goals + skills + overrides
 
 
 NIGHTLY_PROMPT = """Tonight's run for {name} — {today}.
@@ -124,11 +132,14 @@ async def run_night(company_path: Path, settings: Settings,
         setting_sources=[],
     )
 
-    prompt = NIGHTLY_PROMPT.format(
-        name=company.name, today=today,
-        extra=f"\nAdditional directive from the owner (do this first): {extra_task}"
-        if extra_task else "",
-    )
+    extra = (f"\nAdditional directive from the owner (do this first): {extra_task}"
+             if extra_task else "")
+    weekly_file = PROMPTS_DIR / "weekly_review.md"
+    if goals_mod.is_review_day(company) and weekly_file.exists():
+        prompt = weekly_file.read_text(encoding="utf-8").format(
+            name=company.name, today=today, extra=extra)
+    else:
+        prompt = NIGHTLY_PROMPT.format(name=company.name, today=today, extra=extra)
 
     started = datetime.now()
     final_text = ""
